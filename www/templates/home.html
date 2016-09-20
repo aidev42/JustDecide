@@ -1,0 +1,45 @@
+<ion-view title="Just Decide!" ng-init="init()">
+  <ion-nav-buttons side="right">
+    <button class="right button button-icon icon ion-plus" ui-sref="edit"></button>
+  </ion-nav-buttons>
+  <ion-content>
+    <!-- Create list of favorites -->
+    <ion-list show-reorder="false">
+      <ion-item class="item-divider">
+        Favorites</ion-item>
+      <ion-item can-swipe="true" ng-repeat="(key, value) in Favorites" ng-click="open(key)">
+        <div class ="row">
+          <div class="col">
+            <strong>{{value.title}}</strong>
+          </div>
+        </div>
+        <ion-option-button class="custom-button button-large icon ion-ios-star" ng-click="unfavorite(key)"></ion-option-button>
+        <ion-option-button class="button-assertive button-large icon ion-trash-a" ng-click="delete(key)"></ion-option-button>
+
+
+<!--         <ion-reorder-button class="ion-navicon" on-redorder = "reorderItem(item, $fromIndex, $toIndex)">
+        </ion-reorder-button> -->
+      </ion-item>
+      <!-- Create list of normal items -->
+      <ion-item class="item-divider">
+        Decisions</ion-item>
+      <ion-item can-swipe="true" ng-repeat="(key,value) in Decisions" ng-click="open(key)">
+        <div class ="row">
+          <div class="col">
+            <strong>{{value.title}}</strong>
+          </div>
+        </div>
+        <ion-option-button class="custom-button button-large icon ion-ios-star-outline" ng-click="favorite(key)"></ion-option-button>
+        <ion-option-button class="button-assertive button-large icon ion-trash-a" ng-click="delete(key)"></ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-tabs class="tabs-icon-only">
+    <ion-tab icon-on="ion-ios-home" icon-off="ion-ios-home-outline" href="#/home">
+    </ion-tab>
+    <ion-tab icon-on="ion-ios-bolt" icon-off="ion-ios-bolt-outline" href="#/quick">
+    </ion-tab>
+    <ion-tab icon-on="ion-ios-cloud" icon-off="ion-ios-cloud-outline" href="#/settings">
+    </ion-tab>
+  </ion-tabs>
+</ion-view>

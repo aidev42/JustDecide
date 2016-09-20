@@ -1,7 +1,7 @@
 {
   "name": "justdecide",
   "version": "1.1.1",
-  "description": "JustDecide: An Ionic project",
+  "description": "Just Decide: The Cure for Indecision",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",
