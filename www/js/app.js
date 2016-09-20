@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ngStorage'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -53,7 +53,35 @@ angular.module('starter', ['ionic'])
   $urlRouterProvider.otherwise("home");
 })
 
-.controller("MainController",function($scope, $state, $ionicHistory){
+.controller("MainController",function($scope, $state, $ionicHistory, $localStorage){
+
+
+
+  //When creating a new decision, set the workingDecision to blank, and navigate to edit page
+  $scope.createDecision = function(){
+    $localStorage.workingDecision = {
+      title: "Testing",
+      choices:{
+        "choice 1 is a really long choice name what happens now when this is really long text does it cut off or does it expand the entire row who knows": 50,
+        "choice 2": 30,
+        "choice 3": 20
+      }
+    }
+    $state.go("edit")
+  }
+
+  $scope.onProbChange = function(){
+    var $probabilities = angular.element(document.getElementsByClassName('probability'));
+    var sum = 0;
+    for (i=$probabilities.length-1; i >= 0; i--){
+      sum += parseInt($probabilities[i].value)
+    };
+    $scope.workingDecision.totalSum = sum
+  }
+
+  $scope.initEdit = function(){
+    $scope.workingDecision = $localStorage.workingDecision
+  }
 
   var testItem = {
     title: "this is a much longer test name"
@@ -79,8 +107,6 @@ angular.module('starter', ['ionic'])
     $scope.Favorites["test2"] = testItem2
     $scope.Favorites["ZZZ"] = {title:"test1"}
     $scope.Favorites["AAA"] = {title:"testA"}
-    console.log(JSON.stringify($scope.Favorites))
-     console.log(JSON.stringify($scope.Favorites)[1])
   }
 
   $scope.unfavorite = function(key){
