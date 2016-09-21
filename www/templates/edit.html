@@ -1,6 +1,6 @@
 <ion-view title="Decision Editor" ng-init="initEdit()">
   <ion-nav-buttons side="left">
-    <button class="right button ng-click="back()">Cancel</button>
+    <button class="right button" ng-click="back()">Cancel</button>
   </ion-nav-buttons>
   <ion-nav-buttons side="right">
     <button class="left button" ng-click="save()">Save</button>
@@ -43,19 +43,19 @@
         <div class="row">
           <div class="col nowrap col-margin-top">
             <label class="item item-input">
-              <input type="text" ng-model="choiceName" ng-Blur="nameChange()" ng-value="'{{key}}'"></input>
+              <input type="text" ng-model="choiceName" ng-Focus="nameChangeBegin(key)" ng-Blur="nameChangeDone(choiceName)" ng-value="'{{key}}'"></input>
             </label>
           </div>
           <div class="col col-10 col-margin-top">
             <label class="item item-input">
-              <input class="probability" type="number" ng-model="choiceProbability" ng-Blur="probChange()" placeholder="0" ng-value="{{value}}"></input>
+              <input class="probability" type="number" ng-model="choiceProb" ng-Blur="probChange()" placeholder="0" ng-value="{{value}}"></input>
             </label>
           </div>
           <div class="col">
             <div class="button-bar">
               <a class="button button-light icon ion-ios-minus" ng-click="minusProbability()"></a>
               <a class="button button-light icon ion-ios-plus" ng-click="plusProbability()"></a>
-              <a class="button button-light icon ion-trash-b" ng-click="plusProbability()"></a>
+              <a class="button button-light icon ion-trash-b" ng-click="deleteChoice(key)"></a>
             </div>
           </div>
         </div>
