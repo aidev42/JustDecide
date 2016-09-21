@@ -43,12 +43,12 @@
         <div class="row">
           <div class="col nowrap col-margin-top">
             <label class="item item-input">
-              <input type="text" ng-model="choiceName" ng-Focus="nameChangeBegin(key)" ng-Blur="nameChangeDone(choiceName)" ng-value="'{{key}}'"></input>
+              <input type="text" ng-model="formData.choiceName[key]" ng-Focus="nameChangeBegin(key)" ng-Blur="nameChangeDone(formData.choiceName[key])" ng-value="'{{key}}'"></input>
             </label>
           </div>
           <div class="col col-10 col-margin-top">
             <label class="item item-input">
-              <input class="probability" type="number" ng-model="choiceProb" ng-Blur="probChange()" placeholder="0" ng-value="{{value}}"></input>
+              <input class="probability" type="number" ng-model="formData.choiceProb[key]" ng-Blur="probChange(value,formData.choiceProb[key],key)" placeholder="0" ng-value="{{value}}"></input>
             </label>
           </div>
           <div class="col">
