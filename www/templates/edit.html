@@ -1,6 +1,6 @@
 <ion-view title="Decision Editor" ng-init="initEdit()">
   <ion-nav-buttons side="left">
-    <button class="right button button-icon icon ion-arrow-left-c" ng-click="back()"></button>
+    <button class="right button ng-click="back()">Cancel</button>
   </ion-nav-buttons>
   <ion-nav-buttons side="right">
     <button class="left button" ng-click="save()">Save</button>
@@ -9,27 +9,27 @@
   <ion-content>
     <div class="list list-inset">
       <label class="item item-input">
-        <span class="input-label">Decision Title</span>
-        <input type="text" ng-model="decisionTitle" placeholder="DecisionTitle" ng-value="workingDecision.title"></input>
+        <span class="input-label">Title</span>
+        <input type="text" ng-model="decisionTitle" placeholder="New Decision" ng-value="workingDecision.title"></input>
       </label>
 
-      <ion-item class="item-divider margin-top">New Choice</ion-item>
+      <ion-item class="item-divider margin-top">Add Choices</ion-item>
       <label class="item item-input">
-        <span class="input-label">Choice</span>
-        <input type="text" ng-model="choiceTitle" placeholder="Description"></input>
+        <span class="input-label">Name</span>
+        <input type="text" ng-model="formData.newChoiceName" placeholder="New Choice"></input>
       </label>
       <label class="item item-input">
          <span class="input-label">Probability (%)</span>
-        <input type="number" ng-model="choiceProbability" placeholder="1-100"></input>
+        <input type="number" ng-model="formData.newChoiceProb" placeholder="Number from 1 to 99"></input>
       </label>
 
       <div class="button-bar">
-        <a class="button button-balanced" ng-click="evenProbabilities()">Add</a>
+        <a class="button button-balanced" ng-click="addChoice(formData.newChoiceName,formData.newChoiceProb)">Add</a>
       </div>
 
       <ion-item class="item-divider margin-top text-center row">
           <div class="col">
-            Choice Name
+            Choice
           </div>
           <div class="col col-10">
             %
@@ -41,18 +41,21 @@
 
       <ion-item class="small-rows" ng-repeat="(key,value) in workingDecision.choices">
         <div class="row">
-          <div class="col col nowrap col-margin-top" style="vertical-align: middle;">{{key}}
-          </div>
-          <div class="col col-10 col-less-margin-top">
+          <div class="col nowrap col-margin-top">
             <label class="item item-input">
-              <input class="probability" type="number" ng-model="choiceProbability" ng-change="onProbChange()" placeholder="0" ng-value="{{value}}"></input>
+              <input type="text" ng-model="choiceName" ng-Blur="nameChange()" ng-value="'{{key}}'"></input>
+            </label>
+          </div>
+          <div class="col col-10 col-margin-top">
+            <label class="item item-input">
+              <input class="probability" type="number" ng-model="choiceProbability" ng-Blur="probChange()" placeholder="0" ng-value="{{value}}"></input>
             </label>
           </div>
           <div class="col">
             <div class="button-bar">
               <a class="button button-light icon ion-ios-minus" ng-click="minusProbability()"></a>
               <a class="button button-light icon ion-ios-plus" ng-click="plusProbability()"></a>
-<!--               <a class="button button-light icon ion-trash-b" ng-click="plusProbability()"></a> -->
+              <a class="button button-light icon ion-trash-b" ng-click="plusProbability()"></a>
             </div>
           </div>
         </div>
@@ -67,7 +70,7 @@
 
       <div class="button-bar">
         <a class="button button-positive" ng-click="evenProbabilities()">All Equal %</a>
-        <a class="button button-energized" ng-click="evenProbabilities()">Reset All %</a>
+        <a class="button button-energized" ng-click="resetProbabilities()">Reset All %</a>
       </div>
 
 
