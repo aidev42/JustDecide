@@ -1,5 +1,10 @@
 angular.module('JustDecide').controller("EditController",function($scope, $state, $ionicHistory, $localStorage){
 
+  //TO DO:
+  // 9) minus and prob functions dont have bounds the number being increased by the counter, also make sure to clean the numbers to 1 decimal each thing is added to (4 new numbers in each function)
+  // 2ndL) write Save function- check each prob is valid, check sum probs are valid, check decision title valid
+  // last) add error popups from validation
+
   //TEMPORARY FOR DEV- Generating test data
     $localStorage.workingDecision = {
       title: "Testing",
@@ -27,7 +32,12 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
     for (var key in $localStorage.workingDecision.choices){
       sum += $localStorage.workingDecision.choices[key]
     }
-    $scope.workingDecision.totalSum = sum
+    $scope.workingDecision.totalSum = cleanProb(sum,0)
+  }
+
+  var cleanProb = function(prob,precision){
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(prob * multiplier) / multiplier;
   }
 
   //Input validation functions
@@ -46,8 +56,8 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   }
 
   var isProbInvalid = function(prob){
-    if (prob > 99 || prob < 1 || isNaN(prob) || prob == null){
-        console.log(parseInt(prob))
+    if (prob >= 100 || prob <= 0 || isNaN(prob) || prob == null){
+        console.log(prob)
         console.log('number error')
         return true
     } else{
@@ -55,18 +65,13 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
     }
   }
 
-  //TO DO:
-  // 6) write Evenprob function
-  // 7) write resetProb function
-  // 8) write - prob function
-  // 9) write + prob function
-  // 2ndL) write Save function
-  // last) add error popups from validation
-
   //Input field change functions
 
-    //When a name/key is about to be edited, save that name/key for reference once edit is finished
+  //When a name/key is about to be edited, save that name/key for reference once edit is finished
+  //Button toggle is needed to ensure certain functions which run on (key) do not run when a name is being changed, ie they can only run after a name has fully changed and key values have been updated
+  var buttonToggle = true
   $scope.nameChangeBegin = function(choiceName){
+    buttonToggle = false
     console.log('name change begin wtih ', choiceName)
     $localStorage.workingDecision.workingChoice = choiceName
     console.log('storage is now', $localStorage.workingDecision.workingChoice)
@@ -128,6 +133,8 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
       }
 
       //We have to update the scope manually due to a bug without this line where the front end would retain old value linked to newkeyname when you changed a name back to a previous entered name (the ng-model's value was never updated for the previously entered name until now)
+      console.log('old name being deleted is: ', $scope.formData.choiceName[oldName])
+      delete $scope.formData.choiceName[oldName]
       $scope.formData.choiceName[newName] = newName
       //Now that array is ready, use it to reconstruct the key-value pairs
       $localStorage.workingDecision.choices = {}
@@ -140,48 +147,154 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
       console.log('storage workingChoice is now:', $localStorage.workingDecision.choices)
       console.log('SCOPE workingChoice is now:', $scope.workingDecision.choices)
     }
+    buttonToggle = true
   }
 
   $scope.probChange = function(oldProb,newProb,key){
-    //CHANGE THIS TO first take in the front end changed value, find the right key and update local storage, then go through local storage's keys values and sum them, not rely on data stored in view
-    // console.log(choiceKey)
-    console.log(newProb)
+   //When no change is made, $scope.formData.choiceProb (saved as newProb) itself is undefined
+      console.log($scope.formData)
 
-    if (isProbInvalid(newProb)){
-      //Set it back to old
-      $scope.formData.choiceProb[key] = oldProb
+   if ($scope.formData.choiceProb == undefined){
+      //Do nothing since nothing changed
     } else{
-      $scope.formData.choiceProb[key] = newProb
-      $localStorage.workingDecision.choices[key] = newProb
-      console.log('storage workingChoice is now:', $localStorage.workingDecision.choices)
-      console.log('SCOPE workingChoice is now:', $scope.workingDecision.choices)
+      var newProb = cleanProb(newProb,1)
+
+      if (isProbInvalid(newProb)){
+        //Set it back to old
+        $scope.formData.choiceProb[key] = oldProb
+      } else{
+        $scope.formData.choiceProb[key] = newProb
+        $localStorage.workingDecision.choices[key] = newProb
+        console.log('storage workingChoice is now:', $localStorage.workingDecision.choices)
+        console.log('SCOPE workingChoice is now:', $scope.workingDecision.choices)
+      }
+      calcTotalProb()
     }
-    calcTotalProb()
   }
 
   //Button click functions
   $scope.addChoice = function(choiceName,choiceProb){
-    var intProb = parseInt(choiceProb)
+    console.log('before adding choice: ', $localStorage.workingDecision.choices)
+    var newProb = cleanProb(choiceProb,1)
     if (isNameInvalid(choiceName)){
       //fails check
-    } else if (isProbInvalid(intProb)){
+    } else if (isProbInvalid(newProb)){
       //fails check
     } else{
-      $localStorage.workingDecision.choices[choiceName] = intProb
+      $localStorage.workingDecision.choices[choiceName] = newProb
       $scope.formData.newChoiceName = ""
       $scope.formData.newChoiceProb = ""
     }
     calcTotalProb()
+    console.log('after adding choice: ', $localStorage.workingDecision.choices)
   };
 
   $scope.deleteChoice = function(choiceName){
-    delete $localStorage.workingDecision.choices[choiceName]
-    calcTotalProb()
+    if (buttonToggle){
+      delete $localStorage.workingDecision.choices[choiceName]
+      calcTotalProb()
+    }
   }
 
   $scope.evenProb = function(){
-    // keys(workingDecision.choices).length returns the total number of choices
+
+    var counter = 0
+    for (var key in $localStorage.workingDecision.choices){
+      counter += 1
+    }
+    var prob = cleanProb(100 / counter,1)
+    //Assign prob to each key
+    for (var key in $localStorage.workingDecision.choices){
+      $localStorage.workingDecision.choices[key] = prob
+      //The changes do not save down to the actual ng-model values, likely do to a scoping issue. Using $parent in various applications yielded no results, so resorting to jQuery manual overrides of the fields
+      var $probs = angular.element(document.getElementsByClassName('probability'));
+      var sum = 0
+        for (i=0; i < $probs.length; i++){
+          $probs[i].value = prob
+        }
+    }
     calcTotalProb()
+  }
+
+  $scope.resetProb = function(){
+    for (var key in $localStorage.workingDecision.choices){
+      $localStorage.workingDecision.choices[key] = null
+      //The changes do not save down to the actual ng-model values, likely do to a scoping issue. Using $parent in various applications yielded no results, so resorting to jQuery manual overrides of the fields
+      var $probs = angular.element(document.getElementsByClassName('probability'));
+        for (i=0; i < $probs.length; i++){
+          $probs[i].value = 0
+        }
+    }
+    calcTotalProb()
+  }
+
+  $scope.minusProb = function(minusKey,formData){
+    console.log('form data in minus prob: ', formData)
+    var counter = 0
+    var clickedPos = 0
+    var keyNum = 0
+    if (buttonToggle){
+      console.log('this key clicked for minus: ', minusKey)
+      for (var key in $localStorage.workingDecision.choices){
+        if (minusKey == key){
+          clickedPos = keyNum
+        } else if (isProbInvalid($localStorage.workingDecision.choices[key]+1)){
+          //Can't make change so don't add to counter
+        } else {
+          counter += 1
+          console.log('this key made counter increase: ', key)
+        }
+        keyNum ++
+      }
+      console.log('the minus counter is :', counter)
+      //Now we have counter of how many items can be decreased, which is how much existing key will be increased
+      $probs = angular.element(document.getElementsByClassName('probability'))
+      var keyNum = 0
+      for (var key in $localStorage.workingDecision.choices){
+        if (minusKey == key){
+          $probs[clickedPos].value =  Number($probs[clickedPos].value) - counter
+          $localStorage.workingDecision.choices[key] -= counter
+        } else if (!(isProbInvalid($localStorage.workingDecision.choices[key]+1))){
+          $probs[keyNum].value ++
+          $localStorage.workingDecision.choices[key] ++
+        }
+        keyNum ++
+      }
+    }
+  }
+
+  $scope.plusProb = function(plusKey){
+    var counter = 0
+    var clickedPos = 0
+    var keyNum = 0
+    if (buttonToggle){
+      console.log('this key clicked for minus: ', plusKey)
+      for (var key in $localStorage.workingDecision.choices){
+        if (plusKey == key){
+          clickedPos = keyNum
+        } else if (isProbInvalid($localStorage.workingDecision.choices[key]-1)){
+          //Can't make change so don't add to counter
+        } else {
+          counter += 1
+          console.log('this key made counter increase: ', key)
+        }
+        keyNum ++
+      }
+      console.log('the plus counter is :', counter)
+      //Now we have counter of how many items can be decreased, which is how much existing key will be increased
+      $probs = angular.element(document.getElementsByClassName('probability'))
+      var keyNum = 0
+      for (var key in $localStorage.workingDecision.choices){
+        if (plusKey == key){
+          $probs[clickedPos].value =  Number($probs[clickedPos].value) + counter
+          $localStorage.workingDecision.choices[key] += counter
+        } else if (!(isProbInvalid($localStorage.workingDecision.choices[key]-1))){
+          $probs[keyNum].value --
+          $localStorage.workingDecision.choices[key] --
+        }
+        keyNum ++
+      }
+    }
   }
 
   $scope.Save = function(){

@@ -20,7 +20,7 @@
       </label>
       <label class="item item-input">
          <span class="input-label">Probability (%)</span>
-        <input type="number" ng-model="formData.newChoiceProb" placeholder="Number from 1 to 99"></input>
+        <input type="number" ng-model="formData.newChoiceProb" placeholder="Number between 0 to 100"></input>
       </label>
 
       <div class="button-bar">
@@ -53,8 +53,8 @@
           </div>
           <div class="col">
             <div class="button-bar">
-              <a class="button button-light icon ion-ios-minus" ng-click="minusProbability()"></a>
-              <a class="button button-light icon ion-ios-plus" ng-click="plusProbability()"></a>
+              <a class="button button-light icon ion-ios-minus" ng-click="minusProb(key)"></a>
+              <a class="button button-light icon ion-ios-plus" ng-click="plusProb(key)"></a>
               <a class="button button-light icon ion-trash-b" ng-click="deleteChoice(key)"></a>
             </div>
           </div>
@@ -69,8 +69,8 @@
       </ion-item>
 
       <div class="button-bar">
-        <a class="button button-positive" ng-click="evenProbabilities()">All Equal %</a>
-        <a class="button button-energized" ng-click="resetProbabilities()">Reset All %</a>
+        <a class="button button-positive" ng-click="evenProb()">All Equal %</a>
+        <a class="button button-energized" ng-click="resetProb()">Reset All %</a>
       </div>
 
 
