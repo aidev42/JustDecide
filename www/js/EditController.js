@@ -1,29 +1,46 @@
 angular.module('JustDecide').controller("EditController",function($scope, $state, $ionicHistory, $localStorage){
 
   //TO DO:
-  // 9) minus and prob functions dont have bounds the number being increased by the counter, also make sure to clean the numbers to 1 decimal each thing is added to (4 new numbers in each function)
-  // 2ndL) write Save function- check each prob is valid, check sum probs are valid, check decision title valid
+  // 9) minus and prob functions dont have bounds the number being increased by the counter, also make sure to clean the numbers to 1 decimal each thing is added to (4 new numbers in each function). Also change +/- behaivor such that if the total is <100 or >100, only the clicked field updates if in right direction, and nothing updates if in wrong direction
   // last) add error popups from validation
 
   //TEMPORARY FOR DEV- Generating test data
-    $localStorage.workingDecision = {
-      title: "Testing",
-      choices:{
-        "choice is a really long choice name what happens now when this is really long text does it cut off or does it expand the entire row who knows": 50,
-        "choice two": 30,
-        "choice three": 20
-      },
-      workingChoice: ""
-    }
+    // $localStorage.workingDecision = {
+    //   title: "",
+    //   workingTitle: self.title,
+    //   choices:{
+    //     "choice is a really long choice name what happens now when this is really long text does it cut off or does it expand the entire row who knows": 50,
+    //     "choice two": 30,
+    //     "choice three": 20
+    //   },
+    //   workingChoice: ""
+    // }
 
   //BEGIN Controller
   $scope.initEdit = function(){
+    console.log('ON LOAD this is what is in favs: ', $localStorage.Favorites[$localStorage.workingDecision.title])
     $scope.workingDecision = $localStorage.workingDecision
-    $scope.formData = {};
+    $scope.formData = {}
     calcTotalProb()
   }
 
   $scope.back = function() {
+    console.log('ON BACK this is what is in favs: ', $localStorage.Favorites[$localStorage.workingDecision.title])
+    // var key = [$localStorage.workingDecision.title]
+    // if ($localStorage.Favorites[key]){
+    //   $localStorage.workingDecision = $localStorage.Favorites[key]
+    // } else if ($localStorage.Decisions[key]){
+    //   $localStorage.workingDecision = $localStorage.Decisions[key]
+    // } else{
+    //   $localStorage.workingDecision = {}
+    // }
+    // $scope.workingDecision = {
+    //   title: "",
+    //   workingTitle: self.title,
+    //   choices:{},
+    //   workingChoice: ""
+    // }
+    $localStorage.workingDecision = {}
     $ionicHistory.goBack();
   }
 
@@ -41,6 +58,25 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   }
 
   //Input validation functions
+  var isTitleInvalid = function(title){
+    if ((title == undefined) && $scope.workingDecision.title.length > 0){
+      //Title is an existing title that has not changed, so it is valid
+      $scope.workingDecision.workingTitle = $scope.workingDecision.title
+      return false
+    } else if (!title || title.length <= 0){
+      console.log('title error')
+      return true
+    } else if ($scope.workingDecision.title != $scope.workingDecision.workingTitle){
+      //Title has been changed, ie. is trying to save a new value so check if new value is original
+      if ($localStorage.Decisions[$scope.workingDecision.workingTitle] || $localStorage.Favorites[$scope.workingDecision.workingTitle]){
+        console.log('duplicate title')
+        return true
+      }
+    } else{
+      return false
+    }
+  }
+
   var isNameInvalid = function(name){
     if (!name || name.length <= 0){
       console.log('name error')
@@ -56,7 +92,7 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   }
 
   var isProbInvalid = function(prob){
-    if (prob >= 100 || prob <= 0 || isNaN(prob) || prob == null){
+    if (prob > 100 || prob < 0 || isNaN(prob) || prob == null){
         console.log(prob)
         console.log('number error')
         return true
@@ -66,6 +102,16 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   }
 
   //Input field change functions
+
+  $scope.titleChange = function(){
+    if ($scope.formData.decisionTitle == undefined){
+      //do nothing
+    } else {
+      $localStorage.workingDecision.workingTitle = $scope.formData.decisionTitle
+      console.log('the working title is now: ', $localStorage.workingDecision.workingTitle)
+      console.log('scope working title is now: ', $scope.workingDecision.workingTitle)
+    }
+  }
 
   //When a name/key is about to be edited, save that name/key for reference once edit is finished
   //Button toggle is needed to ensure certain functions which run on (key) do not run when a name is being changed, ie they can only run after a name has fully changed and key values have been updated
@@ -205,7 +251,7 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
     var prob = cleanProb(100 / counter,1)
     //Assign prob to each key
     for (var key in $localStorage.workingDecision.choices){
-      $localStorage.workingDecision.choices[key] = prob
+      $scope.workingDecision.choices[key] = prob
       //The changes do not save down to the actual ng-model values, likely do to a scoping issue. Using $parent in various applications yielded no results, so resorting to jQuery manual overrides of the fields
       var $probs = angular.element(document.getElementsByClassName('probability'));
       var sum = 0
@@ -213,12 +259,13 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
           $probs[i].value = prob
         }
     }
+    console.log('ON EVEN PROB this is what is in favs: ', $localStorage.Favorites[$localStorage.workingDecision.title])
     calcTotalProb()
   }
 
   $scope.resetProb = function(){
     for (var key in $localStorage.workingDecision.choices){
-      $localStorage.workingDecision.choices[key] = null
+      $localStorage.workingDecision.choices[key] = 0
       //The changes do not save down to the actual ng-model values, likely do to a scoping issue. Using $parent in various applications yielded no results, so resorting to jQuery manual overrides of the fields
       var $probs = angular.element(document.getElementsByClassName('probability'));
         for (i=0; i < $probs.length; i++){
@@ -297,8 +344,47 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
     }
   }
 
-  $scope.Save = function(){
-    //Must do input validation check on all probabilites, sum of probabilities and Decision Title. If workingDecision title/key already exists in storage, delete storage item and save new item under key. If not exists in storage, just save new item under key
+  $scope.save = function(){
+    console.log('save clicked')
+    if (cleanProb($scope.workingDecision.totalSum) != 100){
+      console.log('cannot save due to total probability')
+    } else if (isTitleInvalid($scope.workingDecision.workingTitle)){
+      console.log('cannot save due to invalid title')
+    } else{
+      //now need to check each probability
+      var probChecker = true
+      for (var key in $localStorage.workingDecision.choices){
+        if( isProbInvalid($localStorage.workingDecision.choices[key])){
+          console.log('cannot save as a specific prob is invalid')
+          probChecker = false
+          break
+        }
+      }
+      if (probChecker){
+        console.log('save passed all checks')
+
+        //find if old key is in favorites, if so delete and save into favorites
+        //else, delete and save into decisions
+        $localStorage.workingDecision.workingChoice = ""
+
+        if ($localStorage.Favorites[$localStorage.workingDecision.title]){
+          delete $localStorage.Favorites[$localStorage.workingDecision.title]
+          //now update title field
+          $localStorage.workingDecision.title = $localStorage.workingDecision.workingTitle
+          $localStorage.Favorites[$localStorage.workingDecision.workingTitle] = $localStorage.workingDecision
+          $localStorage.workingDecision = {}
+        } else {
+          delete $localStorage.Decisions[$localStorage.workingDecision.title]
+          //now update title field
+          $localStorage.workingDecision.title = $localStorage.workingDecision.workingTitle
+          $localStorage.Decisions[$localStorage.workingDecision.workingTitle] = $localStorage.workingDecision
+          //now clear workingDecision
+          $localStorage.workingDecision = {}
+          //now navigate back to Home
+        }
+        $state.go("home")
+      }
+    }
   }
 
 }); //END Controller

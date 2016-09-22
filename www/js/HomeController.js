@@ -1,28 +1,51 @@
 angular.module('JustDecide').controller("HomeController",function($scope, $state, $ionicHistory, $localStorage){
 
-  //TEMPORARY FOR DEV- Generating test data
-    var testItem = {
-      title: "this is a much longer test name"
-    }
-      var testItem2 = {
-      title: "what to get for lunch"
-    }
+  //add ability to open/load a decision into edit screen upon click
 
-    $localStorage.Favorites ={}
-    $localStorage.Decisions ={}
-    $localStorage.Decisions["test3"] = testItem
-    $localStorage.Decisions["test4"] = testItem
-    $localStorage.Decisions["test5"] = testItem
-    $localStorage.Decisions["test6"] = testItem
-    $localStorage.Decisions["test7"] = testItem
-    $localStorage.Decisions["test8"] = testItem
-    $localStorage.Decisions["test9"] = testItem
-    $localStorage.Decisions["test10"] = testItem
-    $localStorage.Decisions["test11"] = testItem
-    $localStorage.Decisions["test11"] = testItem
-    $localStorage.Favorites["test2"] = testItem2
-    $localStorage.Favorites["ZZZ"] = {title:"test1"}
-    $localStorage.Favorites["AAA"] = {title:"testA"}
+  //Next version:
+  //1) Add ability to drag and drop reorder (complication being it has to deal with going between two list headers)- we have the key, so placesave that, then begin recontructing the object until we reach the key tallymarker matching the fromIndex, insert the placeholder, and continue reconstruction
+
+  //TEMPORARY FOR DEV- Generating test data
+    //   var testItem2 = {
+    //   title: "what to get for lunch"
+    // }
+    // var testItem = {
+    //   title: "this is a much longer test name"
+    // }
+    // $localStorage.Favorites ={}
+    // $localStorage.Decisions ={}
+    // $localStorage.Decisions["test3"] = testItem
+    // $localStorage.Decisions["test4"] = testItem
+    // $localStorage.Decisions["test5"] = testItem
+    // $localStorage.Decisions["test6"] = testItem
+    // $localStorage.Decisions["test7"] = testItem
+    // $localStorage.Decisions["test8"] = testItem
+    // $localStorage.Decisions["test9"] = testItem
+    // $localStorage.Decisions["test10"] = testItem
+    // $localStorage.Decisions["test11"] = testItem
+    // $localStorage.Decisions["test11"] = testItem
+    // $localStorage.Favorites["ZZZ"] = {title:"test1"}
+    // $localStorage.Favorites["AAA"] = {title:"testA"}
+
+  // Tutorial Data to Load only on first use only
+    if (!$localStorage.example){
+      $localStorage.Favorites ={}
+      $localStorage.Decisions ={}
+      $localStorage.Favorites["Example: Lunch Order"] = {
+        title: "Example: Lunch Order",
+        workingTitle: self.title,
+        choices:{
+          "Sushi": 10,
+          "Salad": 25,
+          "Pizza": 10,
+          "Chinese": 15,
+          "Wrap": 20,
+          "Greek": 20
+        },
+        workingChoice: ""
+      }
+      $localStorage.example = true
+    }
 
   //BEGIN Controller
   $scope.initHome = function(){
@@ -32,7 +55,12 @@ angular.module('JustDecide').controller("HomeController",function($scope, $state
 
   //Creating a NEW decision: set workingDecision to blank and navigate to edit page
   $scope.createDecision = function(){
-    $localStorage.workingDecision = {}
+    $localStorage.workingDecision = {
+      title: "",
+      workingTitle: self.title,
+      choices:{},
+      workingChoice: ""
+    }
     $state.go("edit")
   }
 
@@ -55,7 +83,21 @@ angular.module('JustDecide').controller("HomeController",function($scope, $state
     delete $localStorage.Favorites[key]
   }
 
-  //Next version:
-  //1) Add ability to drag and drop reorder (complication being it has to deal with going between two list headers)- we have the key, so placesave that, then begin recontructing the object until we reach the key tallymarker matching the fromIndex, insert the placeholder, and continue reconstruction
+  $scope.open = function(key){
+    if ($localStorage.Favorites[key]){
+      $localStorage.workingDecision = angular.copy($localStorage.Favorites[key])
+    } else{
+      $localStorage.workingDecision = angular.copy($localStorage.Decisions[key])
+    }
+    $state.go("edit")
+  }
+
+  $scope.clearAll = function(){
+    console.log($localStorage)
+    $localStorage.Decisions = {}
+    $localStorage.Favorites = {}
+    $localStorage.example = false
+    $localStorage.workingDecision = {}
+  }
 
 }); //END Controller

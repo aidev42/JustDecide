@@ -10,13 +10,13 @@
     <div class="list list-inset">
       <label class="item item-input">
         <span class="input-label">Title</span>
-        <input type="text" ng-model="decisionTitle" placeholder="New Decision" ng-value="workingDecision.title"></input>
+        <input type="text" ng-model="formData.decisionTitle" placeholder="New Decision" ng-value="workingDecision.title" ng-blur="titleChange()"></input>
       </label>
 
-      <ion-item class="item-divider margin-top">Add Choices</ion-item>
+      <ion-item class="item-divider margin-top">New Choice</ion-item>
       <label class="item item-input">
-        <span class="input-label">Name</span>
-        <input type="text" ng-model="formData.newChoiceName" placeholder="New Choice"></input>
+        <span class="input-label">Choice</span>
+        <input type="text" ng-model="formData.newChoiceName" placeholder="Name"></input>
       </label>
       <label class="item item-input">
          <span class="input-label">Probability (%)</span>
@@ -24,12 +24,12 @@
       </label>
 
       <div class="button-bar">
-        <a class="button button-balanced" ng-click="addChoice(formData.newChoiceName,formData.newChoiceProb)">Add</a>
+        <a class="button button-balanced" ng-click="addChoice(formData.newChoiceName,formData.newChoiceProb)">Add Choice</a>
       </div>
 
       <ion-item class="item-divider margin-top text-center row">
           <div class="col">
-            Choice
+            Choices
           </div>
           <div class="col col-10">
             %
@@ -46,7 +46,7 @@
               <input type="text" ng-model="formData.choiceName[key]" ng-Focus="nameChangeBegin(key)" ng-Blur="nameChangeDone(formData.choiceName[key])" ng-value="'{{key}}'"></input>
             </label>
           </div>
-          <div class="col col-10 col-margin-top">
+          <div class="col col-20 col-margin-top">
             <label class="item item-input">
               <input class="probability" type="number" ng-model="formData.choiceProb[key]" ng-Blur="probChange(value,formData.choiceProb[key],key)" placeholder="0" ng-value="{{value}}"></input>
             </label>
