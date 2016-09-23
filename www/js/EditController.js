@@ -2,7 +2,7 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
 
   //TO DO:
   // 9) minus and prob functions dont have bounds the number being increased by the counter, also make sure to clean the numbers to 1 decimal each thing is added to (4 new numbers in each function). Also change +/- behaivor such that if the total is <100 or >100, only the clicked field updates if in right direction, and nothing updates if in wrong direction
-  // last) add error popups from validation
+  // last) add error popups from validation, and confirmation popup when deleting a choice
 
   //TEMPORARY FOR DEV- Generating test data
     // $localStorage.workingDecision = {
@@ -18,29 +18,16 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
 
   //BEGIN Controller
   $scope.initEdit = function(){
-    console.log('ON LOAD this is what is in favs: ', $localStorage.Favorites[$localStorage.workingDecision.title])
     $scope.workingDecision = $localStorage.workingDecision
     $scope.formData = {}
     calcTotalProb()
   }
 
   $scope.back = function() {
-    console.log('ON BACK this is what is in favs: ', $localStorage.Favorites[$localStorage.workingDecision.title])
-    // var key = [$localStorage.workingDecision.title]
-    // if ($localStorage.Favorites[key]){
-    //   $localStorage.workingDecision = $localStorage.Favorites[key]
-    // } else if ($localStorage.Decisions[key]){
-    //   $localStorage.workingDecision = $localStorage.Decisions[key]
-    // } else{
-    //   $localStorage.workingDecision = {}
-    // }
-    // $scope.workingDecision = {
-    //   title: "",
-    //   workingTitle: self.title,
-    //   choices:{},
-    //   workingChoice: ""
-    // }
-    $localStorage.workingDecision = {}
+    if (!$localStorage.fromRun){
+      $localStorage.workingDecision = {}
+    }
+    $localStorage.fromRun = false
     $ionicHistory.goBack();
   }
 
@@ -372,17 +359,19 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
           //now update title field
           $localStorage.workingDecision.title = $localStorage.workingDecision.workingTitle
           $localStorage.Favorites[$localStorage.workingDecision.workingTitle] = $localStorage.workingDecision
-          $localStorage.workingDecision = {}
         } else {
           delete $localStorage.Decisions[$localStorage.workingDecision.title]
           //now update title field
           $localStorage.workingDecision.title = $localStorage.workingDecision.workingTitle
           $localStorage.Decisions[$localStorage.workingDecision.workingTitle] = $localStorage.workingDecision
-          //now clear workingDecision
-          $localStorage.workingDecision = {}
-          //now navigate back to Home
         }
-        $state.go("home")
+        if ($localStorage.fromRun){
+          $state.go("run")
+        } else{
+          $localStorage.workingDecision = {}
+          $state.go("home")
+        }
+        $localStorage.fromRun = false
       }
     }
   }

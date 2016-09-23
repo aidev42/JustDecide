@@ -1,14 +1,41 @@
-<ion-view title="Quick Decisions" class="has-tabs-bottom">
+<ion-view title="Flash Decisions" class="has-tabs-bottom" ng-init="initRun()">
   <ion-nav>
   </ion-nav>
   <ion-content>
+    <div class="list list-inset">
+
+      <ion-item class="item-divider margin-top">Quick Items</ion-item>
+      <ion-toggle ng-model="formData.coinFlip" toggle-class="toggle-assertive" ng-click="coinFlipToggle()">
+         Flip a Coin
+
+      </ion-toggle>
+
+      <ion-toggle checked="false" ng-model="formData.RPS" toggle-class="toggle-assertive" ng-click="RPSToggle()">
+         Rock, Paper, Scissors
+      </ion-toggle>
+
+      <ion-toggle ng-model="formData.dieRoll" toggle-class="toggle-assertive" ng-click="dieRollToggle()">
+         Roll a Six-Sided Die
+      </ion-toggle>
+      <div class="button-bar">
+        <a class="button button-balanced" ng-click="runQuickItem()">Go</a>
+      </div>
+    </div>
+
+    <div class="list list-inset">
+      <ion-item class="item-divider margin-top">Random Number Picker</ion-item>
+
+      <!-- Add options for 1) Minimum value 2) maximum value 3) number of numbers to select 4) replace values? (toggle) -->
+    </div>
+
+
   </ion-content>
   <ion-tabs class="tabs-icon-only">
     <ion-tab icon-on="ion-ios-home" icon-off="ion-ios-home-outline" href="#/home">
     </ion-tab>
     <ion-tab icon-on="ion-ios-bolt" icon-off="ion-ios-bolt-outline" href="#/quick">
     </ion-tab>
-    <ion-tab icon-on="ion-ios-cloud" icon-off="ion-ios-cloud-outline" href="#/settings">
+    <ion-tab icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" href="#/settings">
     </ion-tab>
   </ion-tabs>
 </ion-view>

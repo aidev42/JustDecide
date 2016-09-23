@@ -1,0 +1,37 @@
+<ion-view title="Run Decision" ng-init="initRun()">
+  <ion-nav-buttons side="left">
+    <button class="right button button-icon icon ion-arrow-left-c" ng-click="back()">Back</button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="left button button-icon icon ion-ios-compose-outline" ng-click="edit()">Edit</button>
+  </ion-nav-buttons>
+
+  <ion-content>
+    <div class="list list-inset">
+      <ion-item class="item-divider margin-top text-left row">
+        <div class="col">
+          Choices
+        </div>
+        <div class="col">
+          %
+        </div>
+      </ion-item>
+
+      <ion-item ng-repeat="(key,value) in workingDecision.choices">
+        <div class="row">
+          <div class="col nowrap col-margin-top">
+            {{key}}
+          </div>
+          <div class="col col-margin-top">
+            {{value}}
+          </div>
+        </div>
+      </ion-item>
+      <div class="button-bar">
+        <a class="button button-energized" ng-click="decide()">Decide Now!</a>
+      </div>
+    </div>
+
+
+  </ion-content>
+</ion-view>

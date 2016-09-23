@@ -1,9 +1,10 @@
-angular.module('JustDecide').controller("HomeController",function($scope, $state, $ionicHistory, $localStorage){
+angular.module('JustDecide').controller("MainController",function($scope, $state, $ionicHistory, $localStorage){
 
-  //add ability to open/load a decision into edit screen upon click
+  //To do:
+  // add popup confirmation before delete
 
   //Next version:
-  //1) Add ability to drag and drop reorder (complication being it has to deal with going between two list headers)- we have the key, so placesave that, then begin recontructing the object until we reach the key tallymarker matching the fromIndex, insert the placeholder, and continue reconstruction
+  //Add ability to drag and drop reorder (complication being it has to deal with going between two list headers)- we have the key, so placesave that, then begin recontructing the object until we reach the key tallymarker matching the fromIndex, insert the placeholder, and continue reconstruction
 
   //TEMPORARY FOR DEV- Generating test data
     //   var testItem2 = {
@@ -51,6 +52,7 @@ angular.module('JustDecide').controller("HomeController",function($scope, $state
   $scope.initHome = function(){
     $scope.Favorites = $localStorage.Favorites
     $scope.Decisions = $localStorage.Decisions
+    $localStorage.fromRun = false
   }
 
   //Creating a NEW decision: set workingDecision to blank and navigate to edit page
@@ -89,7 +91,8 @@ angular.module('JustDecide').controller("HomeController",function($scope, $state
     } else{
       $localStorage.workingDecision = angular.copy($localStorage.Decisions[key])
     }
-    $state.go("edit")
+    $state.go("run")
+
   }
 
   $scope.clearAll = function(){
@@ -97,6 +100,7 @@ angular.module('JustDecide').controller("HomeController",function($scope, $state
     $localStorage.Decisions = {}
     $localStorage.Favorites = {}
     $localStorage.example = false
+    $localStorage.fromRun = false
     $localStorage.workingDecision = {}
   }
 

@@ -29,7 +29,7 @@ angular.module('JustDecide', ['ionic', 'ngStorage'])
     .state("home", {
       "url": "/home",
       "templateUrl": "templates/home.html",
-      "controller": "HomeController",
+      "controller": "MainController",
       "cache": false
     })
     .state("edit", {
@@ -38,16 +38,22 @@ angular.module('JustDecide', ['ionic', 'ngStorage'])
       "controller": "EditController",
       "cache": false
     })
+    .state("run", {
+      "url": "/run",
+      "templateUrl": "templates/run.html",
+      "controller": "RunController",
+      "cache": false
+    })
     .state("quick", {
       "url": "/quick",
       "templateUrl": "templates/quick.html",
-      "controller": "HomeController",
+      "controller": "RunController",
       "cache": false
     })
     .state("settings", {
       "url": "/settings",
       "templateUrl": "templates/settings.html",
-      "controller": "HomeController",
+      "controller": "MainController",
       "cache": false
     });
 
