@@ -24,7 +24,14 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   }
 
   $scope.back = function() {
-    if (!$localStorage.fromRun){
+    var key = $localStorage.workingDecision.title
+    if ($localStorage.fromRun){
+      if ($localStorage.Favorites[key]){
+        $localStorage.workingDecision = angular.copy($localStorage.Favorites[key])
+      } else {
+        $localStorage.workingDecision = angular.copy($localStorage.Decisions[key])
+      }
+    } else {
       $localStorage.workingDecision = {}
     }
     $localStorage.fromRun = false
@@ -208,15 +215,16 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   //Button click functions
   $scope.addChoice = function(choiceName,choiceProb){
     console.log('before adding choice: ', $localStorage.workingDecision.choices)
-    var newProb = cleanProb(choiceProb,1)
+    // var newProb = cleanProb(choiceProb,1)
     if (isNameInvalid(choiceName)){
       //fails check
-    } else if (isProbInvalid(newProb)){
+    } //else if (isProbInvalid(newProb)){
       //fails check
-    } else{
-      $localStorage.workingDecision.choices[choiceName] = newProb
+    //}
+    else{
+      $localStorage.workingDecision.choices[choiceName] = 0 //newProb
       $scope.formData.newChoiceName = ""
-      $scope.formData.newChoiceProb = ""
+      // $scope.formData.newChoiceProb = ""
     }
     calcTotalProb()
     console.log('after adding choice: ', $localStorage.workingDecision.choices)
@@ -357,13 +365,13 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
         if ($localStorage.Favorites[$localStorage.workingDecision.title]){
           delete $localStorage.Favorites[$localStorage.workingDecision.title]
           //now update title field
-          $localStorage.workingDecision.title = $localStorage.workingDecision.workingTitle
-          $localStorage.Favorites[$localStorage.workingDecision.workingTitle] = $localStorage.workingDecision
+          $localStorage.workingDecision.title = angular.copy($localStorage.workingDecision.workingTitle)
+          $localStorage.Favorites[$localStorage.workingDecision.workingTitle] = angular.copy($localStorage.workingDecision)
         } else {
           delete $localStorage.Decisions[$localStorage.workingDecision.title]
           //now update title field
-          $localStorage.workingDecision.title = $localStorage.workingDecision.workingTitle
-          $localStorage.Decisions[$localStorage.workingDecision.workingTitle] = $localStorage.workingDecision
+          $localStorage.workingDecision.title = angular.copy($localStorage.workingDecision.workingTitle)
+          $localStorage.Decisions[$localStorage.workingDecision.workingTitle] = angular.copy($localStorage.workingDecision)
         }
         if ($localStorage.fromRun){
           $state.go("run")

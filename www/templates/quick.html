@@ -1,7 +1,7 @@
-<ion-view title="Flash Decisions" class="has-tabs-bottom" ng-init="initRun()">
+<ion-view title="Flash Decisions" ng-init="initQuick()">
   <ion-nav>
   </ion-nav>
-  <ion-content>
+  <ion-content class="has-footer">
     <div class="list list-inset">
 
       <ion-item class="item-divider margin-top">Quick Items</ion-item>
@@ -24,6 +24,40 @@
 
     <div class="list list-inset">
       <ion-item class="item-divider margin-top">Random Number Picker</ion-item>
+
+      <ion-item class="row">
+        <div class="col col-margin-left col-margin-top">How Many Numbers</div>
+        <div class="col col-20">
+          <label class="item item-input">
+            <input type="number" ng-model="formData.numberChoices" placeholder="0"></input>
+          </label>
+        </div>
+      </ion-item>
+
+      <ion-item class="row">
+        <div class="col col-margin-left col-margin-top">From (Min Value)</div>
+        <div class="col col-20">
+          <label class="item item-input">
+            <input type="number" ng-model="formData.minValue" placeholder="0"></input>
+          </label>
+        </div>
+      </ion-item>
+
+      <ion-item class="row">
+        <div class="col col-margin-left col-margin-top">To (Max Value)</div>
+        <div class="col col-20">
+          <label class="item item-input">
+            <input type="number" ng-model="formData.maxValue" placeholder="0"></input>
+          </label>
+        </div>
+      </ion-item>
+
+      <ion-toggle checked="false" ng-model="formData.replaceValues" toggle-class="toggle-assertive">Allow Duplicate Values
+      </ion-toggle>
+
+      <div class="button-bar">
+        <a class="button button-balanced" ng-click="randPicker(formData.numberChoices,formData.minValue,formData.maxValue,formData.replaceValues)">Select</a>
+      </div>
 
       <!-- Add options for 1) Minimum value 2) maximum value 3) number of numbers to select 4) replace values? (toggle) -->
     </div>

@@ -47,7 +47,7 @@ angular.module('JustDecide', ['ionic', 'ngStorage'])
     .state("quick", {
       "url": "/quick",
       "templateUrl": "templates/quick.html",
-      "controller": "RunController",
+      "controller": "QuickController",
       "cache": false
     })
     .state("settings", {
