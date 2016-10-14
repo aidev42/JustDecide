@@ -8,7 +8,7 @@
 
   <ion-content>
     <div class="list list-inset">
-      <ion-item class="item-divider margin-top text-left row">
+      <ion-item class="item-divider margin-top text-center row">
         <div class="col">
           Choices
         </div>
@@ -19,15 +19,15 @@
 
       <ion-item ng-repeat="(key,value) in workingDecision.choices">
         <div class="row">
-          <div class="col nowrap col-margin-top">
+          <div class="col nowrap text-center col-margin-top">
             {{key}}
           </div>
-          <div class="col col-margin-top">
+          <div class="col text-center col-margin-top">
             {{value}}
           </div>
         </div>
       </ion-item>
-      <div class="button-bar">
+      <div id="decideButton" class="button-bar margin-top">
         <a class="button button-energized" ng-click="decide()">Decide Now!</a>
       </div>
     </div>

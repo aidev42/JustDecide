@@ -15,6 +15,10 @@
   margin-top: 2%;
 }
 
+#decideButton{
+  margin-top: 2%;
+}
+
 .row .col .button-bar .button.active, .row .col .button-bar .button.activated{
   border-color: transparent;
 }
@@ -49,4 +53,13 @@
 
 .col-margin-left{
   margin-left: .55%;
+}
+
+#popover{
+  width: 50%;
+}
+
+#popover ion-content{
+  margin-left: 2%;
+  margin-right: 2%;
 }

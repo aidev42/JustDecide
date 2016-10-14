@@ -1,9 +1,5 @@
 angular.module('JustDecide').controller("EditController",function($scope, $state, $ionicHistory, $localStorage){
 
-  //TO DO:
-  // 9) minus and prob functions dont have bounds the number being increased by the counter, also make sure to clean the numbers to 1 decimal each thing is added to (4 new numbers in each function). Also change +/- behaivor such that if the total is <100 or >100, only the clicked field updates if in right direction, and nothing updates if in wrong direction
-  // last) add error popups from validation, and confirmation popup when deleting a choice
-
   //TEMPORARY FOR DEV- Generating test data
     // $localStorage.workingDecision = {
     //   title: "",
@@ -271,10 +267,13 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
   }
 
   $scope.minusProb = function(minusKey,formData){
+
+    //First find location of clicked key
     console.log('form data in minus prob: ', formData)
     var counter = 0
     var clickedPos = 0
     var keyNum = 0
+    //Only allow update if buttonToggle lets it be clicked (this prevents clicking when still editing name)
     if (buttonToggle){
       console.log('this key clicked for minus: ', minusKey)
       for (var key in $localStorage.workingDecision.choices){
@@ -284,24 +283,36 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
           //Can't make change so don't add to counter
         } else {
           counter += 1
-          console.log('this key made counter increase: ', key)
         }
         keyNum ++
       }
-      console.log('the minus counter is :', counter)
-      //Now we have counter of how many items can be decreased, which is how much existing key will be increased
+
       $probs = angular.element(document.getElementsByClassName('probability'))
-      var keyNum = 0
-      for (var key in $localStorage.workingDecision.choices){
-        if (minusKey == key){
-          $probs[clickedPos].value =  Number($probs[clickedPos].value) - counter
-          $localStorage.workingDecision.choices[key] -= counter
-        } else if (!(isProbInvalid($localStorage.workingDecision.choices[key]+1))){
-          $probs[keyNum].value ++
-          $localStorage.workingDecision.choices[key] ++
+      var smart = $localStorage.smartMinusPlus
+      //If clicked probability is already 100 or greater, do nothing
+      if ( $probs[clickedPos].value <= 0){
+
+      } //If total probability < 100 -OR- smartMinusProb is off, just minus 1 from the selected option. Else run complex logic below
+      else if ( ($scope.workingDecision.totalSum > 100) || !(smart)){
+        $probs[clickedPos].value --
+        $localStorage.workingDecision.choices[minusKey] --
+        console.log($localStorage.workingDecision.choices)
+      } else {
+        console.log('the minus counter is :', counter)
+        //Now we have counter of how many items can be decreased, which is how much existing key will be increased
+        var keyNum = 0
+        for (var key in $localStorage.workingDecision.choices){
+          if (minusKey == key){
+            $probs[clickedPos].value =  Number($probs[clickedPos].value) - counter
+            $localStorage.workingDecision.choices[key] -= counter
+          } else if (!(isProbInvalid($localStorage.workingDecision.choices[key]+1))){
+            $probs[keyNum].value ++
+            $localStorage.workingDecision.choices[key] ++
+          }
+          keyNum ++
         }
-        keyNum ++
       }
+      calcTotalProb()
     }
   }
 
@@ -322,20 +333,33 @@ angular.module('JustDecide').controller("EditController",function($scope, $state
         }
         keyNum ++
       }
-      console.log('the plus counter is :', counter)
-      //Now we have counter of how many items can be decreased, which is how much existing key will be increased
+
       $probs = angular.element(document.getElementsByClassName('probability'))
-      var keyNum = 0
-      for (var key in $localStorage.workingDecision.choices){
-        if (plusKey == key){
-          $probs[clickedPos].value =  Number($probs[clickedPos].value) + counter
-          $localStorage.workingDecision.choices[key] += counter
-        } else if (!(isProbInvalid($localStorage.workingDecision.choices[key]-1))){
-          $probs[keyNum].value --
-          $localStorage.workingDecision.choices[key] --
+      var smart = $localStorage.smartMinusPlus
+      //If clicked probability is already 100 or greater, do nothing
+      if ( $probs[clickedPos].value >= 100){
+
+      } //If total probability < 100 -OR- smartMinusProb is off, just add 1 to the selected option. Else run complex logic below
+      else if ( ($scope.workingDecision.totalSum < 100) || !(smart)){
+        $probs[clickedPos].value ++
+        $localStorage.workingDecision.choices[plusKey] ++
+        console.log($localStorage.workingDecision.choices)
+      } else {
+        console.log('the plus counter is :', counter)
+        //Now we have counter of how many items can be decreased, which is how much existing key will be increased
+        var keyNum = 0
+        for (var key in $localStorage.workingDecision.choices){
+          if (plusKey == key){
+            $probs[clickedPos].value =  Number($probs[clickedPos].value) + counter
+            $localStorage.workingDecision.choices[key] += counter
+          } else if (!(isProbInvalid($localStorage.workingDecision.choices[key]-1))){
+            $probs[keyNum].value --
+            $localStorage.workingDecision.choices[key] --
+          }
+          keyNum ++
         }
-        keyNum ++
       }
+      calcTotalProb()
     }
   }
 

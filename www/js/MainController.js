@@ -1,8 +1,5 @@
 angular.module('JustDecide').controller("MainController",function($scope, $state, $ionicHistory, $localStorage){
 
-  //To do:
-  // add popup confirmation before delete
-
   //Next version:
   //Add ability to drag and drop reorder (complication being it has to deal with going between two list headers)- we have the key, so placesave that, then begin recontructing the object until we reach the key tallymarker matching the fromIndex, insert the placeholder, and continue reconstruction
 
@@ -43,9 +40,12 @@ angular.module('JustDecide').controller("MainController",function($scope, $state
           "Wrap": 20,
           "Greek": 20
         },
-        workingChoice: ""
+        workingChoice: "",
+        lastRunTime: 0
       }
       $localStorage.example = true
+      $localStorage.smartMinusPlus = true
+      $localStorage.lockout = false
     }
 
   //BEGIN Controller
@@ -61,7 +61,8 @@ angular.module('JustDecide').controller("MainController",function($scope, $state
       title: "",
       workingTitle: self.title,
       choices:{},
-      workingChoice: ""
+      workingChoice: "",
+      lastRunTime: 0
     }
     $state.go("edit")
   }
@@ -92,16 +93,6 @@ angular.module('JustDecide').controller("MainController",function($scope, $state
       $localStorage.workingDecision = angular.copy($localStorage.Decisions[key])
     }
     $state.go("run")
-
-  }
-
-  $scope.clearAll = function(){
-    console.log($localStorage)
-    $localStorage.Decisions = {}
-    $localStorage.Favorites = {}
-    $localStorage.example = false
-    $localStorage.fromRun = false
-    $localStorage.workingDecision = {}
   }
 
 }); //END Controller

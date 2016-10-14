@@ -102,7 +102,11 @@ angular.module('JustDecide').controller("QuickController",function($scope, $stat
         for (i=0; i < numberPicks; i++){
           //picks a random integer between 0 and upperBound
           var rand = Math.floor(Math.random()*(upperIndexBound+1));
-          arrayPicks.push(arrayRange[rand])
+          if (arrayPicks == []){
+            arrayPicks.push(arrayRange[rand])
+          } else{
+            arrayPicks.push(" "+arrayRange[rand])
+          }
           //now pick numbers, while picks < number: generate ranomd number between 0 and array.length, get the value at this array index, then if replace is off delete that element of the array
           if (!replace){
             arrayRange.splice(rand, 1)

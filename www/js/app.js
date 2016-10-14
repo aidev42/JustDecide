@@ -53,7 +53,7 @@ angular.module('JustDecide', ['ionic', 'ngStorage'])
     .state("settings", {
       "url": "/settings",
       "templateUrl": "templates/settings.html",
-      "controller": "MainController",
+      "controller": "SettingsController",
       "cache": false
     });
 

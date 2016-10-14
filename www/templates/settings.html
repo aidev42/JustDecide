@@ -1,10 +1,71 @@
-<ion-view title="Settings" class="has-tabs-bottom">
+<ion-view title="Settings" ng-init="initSettings()">>
   <ion-nav>
   </ion-nav>
-  <ion-content>
-    <div class="button-bar">
-      <a class="button button-balanced" ng-click="clearAll()">Clear All Local Data</a>
+
+<!--   <script id="my-popover.html" type="text/ng-template">
+    <ion-popover-view>
+      <ion-header-bar>
+        <h1 class="title">My Popover Title</h1>
+      </ion-header-bar>
+      <ion-content>
+        Hello!
+      </ion-content>
+    </ion-popover-view>
+  </script> -->
+
+  <ion-content class="has-footer">
+    <div class="list list-inset">
+      <ion-item class="item-divider margin-top text-left row">Options</ion-item>
+
+        <ion-item class="row">
+          <div class="col col-margin-top col-20">
+            <ion-button class="button-assertive button-large icon ion-ios-help-outline" ng-click="openPopover($event,'smart')"></ion-button>
+          </div>
+          <div class="col col-margin-top">
+            <ion-toggle ng-model="formData.smartMinusPlus" ng-checked="formData.smartMinusPlus" toggle-class="toggle-assertive" ng-click="smartToggle(formData.smartMinusPlus)">Smart Prob -/+
+            </ion-toggle>
+          </div>
+        </ion-item>
+
+        <ion-item class="row">
+          <div class="col col-margin-top col-20">
+            <ion-button class="button-assertive button-large icon ion-ios-help-outline" ng-click="openPopover($event,'lockout')"></ion-button>
+          </div>
+          <div class="col col-margin-top">
+            <ion-toggle ng-model="formData.lockout" ng-checked="formData.lockout" toggle-class="toggle-assertive" ng-click="lockoutToggle(formData.lockout)">5 Min Lockout
+            </ion-toggle>
+          </div>
+        </ion-item>
     </div>
+
+    <div class="list list-inset">
+    <ion-item class="item-divider margin-top text-left row">Clear Local Data &nbsp<ion-button class="button-assertive icon ion-ios-help-outline" ng-click="openPopover($event,'clear')"></ion-button></ion-item>
+      <div class="button-bar">
+        <a class="button button-assertive" ng-click="clearAll()">Reset All Local Data</a>
+      </div>
+    <ion-item class="item-divider margin-top text-left row">Backup Local Data &nbsp<ion-button class="button-assertive icon ion-ios-help-outline" ng-click="openPopover($event,'backup')"></ion-button></ion-item>
+      <ion-item class="row">
+        <div class="col col-margin-top">
+          <label class="item item-input">
+            <input type="text" ng-model="formData.email" placeholder="Email"></input>
+          </label>
+        </div>
+      </ion-item>
+      <ion-item class="row">
+        <div class="col col-margin-top">
+          <label class="item item-input">
+            <input type="password" ng-model="formData.password" placeholder="Password"></input>
+          </label>
+        </div>
+      </ion-item>
+      <div class="button-bar">
+        <a class="button button-assertive" ng-click="backupData(formData.email,formData.password)">Backup Local Data</a>
+        <a class="button button-calm" ng-click="retrieveData(formData.email,formData.password)">Retrieve Saved Data</a>
+      </div>
+
+    </div>
+
+
   </ion-content>
   <ion-tabs class="tabs-icon-only">
     <ion-tab icon-on="ion-ios-home" icon-off="ion-ios-home-outline" href="#/home">
